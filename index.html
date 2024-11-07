@@ -13,12 +13,14 @@
     <div id="quiz-container" style="display: none;">
         <div id="question"></div>
         <div id="options"></div>
-        <button onclick="checkAnswer()">Check</button>
-        <button onclick="nextQuestion()">Next Question</button>
+        <div id="answer-feedback" style="display: none;"></div>
+        <input type="checkbox" id="check-answer" onclick="checkAnswer()"> Check Answer
+        <button id="next-button" onclick="nextQuestion()">Next Question</button>
+        <button id="reset-button" onclick="resetQuiz()" style="display: none;">Reset Quiz</button>
     </div>
 
-    <div id="firework-container"></div>
-    
+    <div id="firework-container" style="display: none;"></div>
+
     <script src="website/script.js"></script>
 </body>
 </html>
