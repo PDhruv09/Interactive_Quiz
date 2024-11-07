@@ -2,64 +2,113 @@ import java.util.Scanner;
 
 public class Quiz {
     private DoublyLinkedList<Question> questions;
-    private int currentQuestionIndex;
-    private Scanner scanner;
+    private DoublyLinkedList.Node<Question> currentQuestionNode;
+    private int score;
 
     public Quiz() {
         questions = new DoublyLinkedList<>();
-        currentQuestionIndex = 0;
-        scanner = new Scanner(System.in);
+        score = 0;
     }
 
-    // Add questions to the doubly linked list
+    // Add a question to the doubly linked list
     public void addQuestion(String questionText, String[] options, String correctAnswer) {
         questions.add(new Question(questionText, options, correctAnswer));
     }
 
-    // Start the quiz
+    // Start the quiz, initializing current question to the head
     public void start() {
-        displayCurrentQuestion();
+        currentQuestionNode = questions.getHead();
+        if (currentQuestionNode != null) {
+            displayCurrentQuestion();
+        } else {
+            System.out.println("No questions in the quiz.");
+        }
     }
 
-    // Display the current question and options
-    private void displayCurrentQuestion() {
-        if (currentQuestionIndex < questions.size()) {
-            Question currentQuestion = questions.get(currentQuestionIndex);
-            System.out.println("Question: " + currentQuestion.questionText);
+    // Display the current question
+    public void displayCurrentQuestion() {
+        Question question = currentQuestionNode.getData();
+        System.out.println(question.getQuestionText());
+        
+        String[] options = question.getOptions();
+        for (int i = 0; i < options.length; i++) {
+            System.out.println((char)('A' + i) + ": " + options[i]);
+        }
+        System.out.print("Enter your answer (A, B, C, or D): ");
+    }
 
-            for (int i = 0; i < currentQuestion.options.length; i++) {
-                System.out.println((i + 1) + ". " + currentQuestion.options[i]);
-            }
-            System.out.print("Your answer: ");
-            String userAnswer = scanner.nextLine();
+    // Check answer, give feedback, and move to the next question
+    public void checkAnswer(String userAnswer) {
+        Question question = currentQuestionNode.getData();
+        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
+            System.out.println("Correct!");
+            score++;
+        } else {
+            System.out.println("Incorrect. The correct answer was " + question.getCorrectAnswer() + ".");
+        }
+        
+        // Move to the next question or show results
+        if (currentQuestionNode.getNext() != null) {
+            currentQuestionNode = currentQuestionNode.getNext();
+            displayCurrentQuestion();
+        } else {
+            showResults();
+        }
+    }
 
-            if (userAnswer.equalsIgnoreCase(currentQuestion.correctAnswer)) {
-                System.out.println("Correct!\n");
+    // Show the results
+    private void showResults() {
+        System.out.println("Quiz complete! Your total score is: " + score + " out of " + questions.size());
+    }
+
+    // Inner class for doubly linked list
+    private static class DoublyLinkedList<T> {
+        private Node<T> head;
+        private Node<T> tail;
+        private int size;
+
+        public void add(T data) {
+            Node<T> newNode = new Node<>(data);
+            if (tail == null) {
+                head = newNode;
+                tail = newNode;
             } else {
-                System.out.println("Incorrect.\n");
+                tail.next = newNode;
+                newNode.prev = tail;
+                tail = newNode;
             }
-        } else {
-            System.out.println("Quiz Over!");
+            size++;
         }
-    }
 
-    // Move to the next question in the list
-    public void nextQuestion() {
-        if (currentQuestionIndex < questions.size() - 1) {
-            currentQuestionIndex++;
-            displayCurrentQuestion();
-        } else {
-            System.out.println("No more questions!");
+        public Node<T> getHead() {
+            return head;
         }
-    }
 
-    // Move to the previous question in the list
-    public void previousQuestion() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            displayCurrentQuestion();
-        } else {
-            System.out.println("This is the first question.");
+        public int size() {
+            return size;
+        }
+
+        // Node class for the doubly linked list
+        private static class Node<T> {
+            private T data;
+            private Node<T> next;
+            private Node<T> prev;
+
+            public Node(T data) {
+                this.data = data;
+            }
+
+            public T getData() {
+                return data;
+            }
+
+            public Node<T> getNext() {
+                return next;
+            }
+
+            public Node<T> getPrev() {
+                return prev;
+            }
         }
     }
 }

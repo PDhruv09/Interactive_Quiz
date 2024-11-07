@@ -1,56 +1,46 @@
-public class DoublyLinkedList<T> {
-    private Node<T> head;
-    private Node<T> tail;
-    private int size;
+class Node {
+    constructor(data) {
+        this.data = data;
+        this.next = null;
+        this.prev = null;
+    }
+}
 
-    public DoublyLinkedList() {
-        this.head = this.tail = null;
-        this.size = 0;
+class DoublyLinkedList {
+    constructor() {
+        this.head = null;
+        this.tail = null;
     }
 
-    public void add(T value) {
-        Node<T> newNode = new Node<>(value);
-        if (tail == null) {
-            head = tail = newNode;
+    add(data) {
+        const newNode = new Node(data);
+        if (!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
         } else {
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
+            newNode.prev = this.tail;
+            this.tail.next = newNode;
+            this.tail = newNode;
         }
-        size++;
     }
 
-    public T get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+    getNodeAt(index) {
+        let current = this.head;
+        let i = 0;
+        while (current && i < index) {
+            current = current.next;
+            i++;
         }
-        Node<T> current = head;
-        for (int i = 0; i < index; i++) {
+        return current ? current.data : null;
+    }
+
+    size() {
+        let current = this.head;
+        let count = 0;
+        while (current) {
+            count++;
             current = current.next;
         }
-        return current.value;
-    }
-
-    public T getFirst() {
-        return head != null ? head.value : null;
-    }
-
-    public T getLast() {
-        return tail != null ? tail.value : null;
-    }
-
-    public int size() {
-        return size;
-    }
-
-    private class Node<T> {
-        T value;
-        Node<T> next;
-        Node<T> prev;
-
-        Node(T value) {
-            this.value = value;
-            this.next = this.prev = null;
-        }
+        return count;
     }
 }
