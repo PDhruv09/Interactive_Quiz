@@ -2,7 +2,7 @@ let currentQuestionIndex = 0;
 let quiz;
 
 function displayQuestion() {
-    const questionData = quiz.questions.getNodeAt(currentQuestionIndex); // Get the current question node
+    const questionData = quiz.questions.getNodeAt(currentQuestionIndex);
 
     if (questionData) {
         document.getElementById("question").textContent = questionData.questionText;
@@ -10,6 +10,7 @@ function displayQuestion() {
         const optionsContainer = document.getElementById("options");
         optionsContainer.innerHTML = ''; // Clear previous options
 
+        // Loop through options as key-value pairs
         Object.entries(questionData.options).forEach(([key, optionText]) => {
             const optionButton = document.createElement("button");
             optionButton.textContent = `${key}: ${optionText}`;
@@ -20,6 +21,7 @@ function displayQuestion() {
         console.error("No question data found!");
     }
 }
+
 
 function selectAnswer(selectedOption) {
     const questionData = quiz.questions.getNodeAt(currentQuestionIndex);
