@@ -1,0 +1,66 @@
+const questions = [
+    { questionText: "What is the capital of France?", options: { "A": "Paris", "B": "London", "C": "Berlin", "D": "Madrid" }, correctAnswer: "A" },
+    { questionText: "What is the largest planet in our Solar System?", options: { "A": "Earth", "B": "Jupiter", "C": "Mars", "D": "Venus" }, correctAnswer: "B" },
+    { questionText: "Who wrote 'Hamlet'?", options: { "A": "Charles Dickens", "B": "William Shakespeare", "C": "J.K. Rowling", "D": "Jane Austen" }, correctAnswer: "B" }
+];
+
+let currentQuestionIndex = 0;
+let selectedAnswer = null;
+
+function startQuiz() {
+    document.getElementById("start-button").style.display = "none";
+    document.getElementById("quiz-container").style.display = "block";
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const question = questions[currentQuestionIndex];
+    document.getElementById("question").textContent = question.questionText;
+    
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = ''; // Clear previous options
+    selectedAnswer = null; // Reset selected answer
+
+    // Add options as buttons
+    for (let [key, value] of Object.entries(question.options)) {
+        const button = document.createElement("button");
+        button.textContent = `${key}: ${value}`;
+        button.classList.add("quiz-btn");
+        button.onclick = () => selectAnswer(key);
+        optionsContainer.appendChild(button);
+    }
+}
+
+function selectAnswer(answer) {
+    selectedAnswer = answer;
+}
+
+function checkAnswer() {
+    const question = questions[currentQuestionIndex];
+    if (selectedAnswer === question.correctAnswer) {
+        displayFireworks();
+        alert("Congratulations! You are correct!");
+    } else {
+        alert("Incorrect! Try the next question.");
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+    } else {
+        alert("Quiz Complete!");
+        document.getElementById("quiz-container").style.display = "none";
+    }
+}
+
+function displayFireworks() {
+    const fireworkContainer = document.getElementById("firework-container");
+    fireworkContainer.innerHTML = '🎆'; // Emoji or fireworks element
+    fireworkContainer.classList.add("fireworks");
+
+    setTimeout(() => {
+        fireworkContainer.innerHTML = ''; // Clear after animation
+    }, 1000); // Match the animation duration in CSS
+}

@@ -1,0 +1,60 @@
+/* General styling */
+body {
+    background-color: #1a1a4d; /* Dark blue background */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    user-select: none;
+}
+
+/* Quiz container */
+#quiz-container {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background-color: #2e2e73;
+    border-radius: 8px;
+    width: 60%;
+}
+
+/* Question text */
+#question {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Start button */
+#start-button, button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Fireworks animation */
+@keyframes fireworks {
+    0% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(2); }
+}
+
+/* Firework container */
+.fireworks {
+    position: fixed;
+    top: 10%;
+    font-size: 2em;
+    color: yellow;
+    animation: fireworks 1s ease-in-out;
+}
