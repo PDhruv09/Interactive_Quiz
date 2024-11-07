@@ -1,6 +1,5 @@
-/* General styling */
 body {
-    background-color: #1a1a4d; /* Dark blue background */
+    background-color: #1a1a4d;
     color: white;
     display: flex;
     justify-content: center;
@@ -9,12 +8,10 @@ body {
     height: 100vh;
     font-family: Arial, sans-serif;
     margin: 0;
-    user-select: none;
 }
 
-/* Quiz container */
 #quiz-container {
-    display: none;
+    display: none; /* Initially hidden */
     text-align: center;
     padding: 20px;
     background-color: #2e2e73;
@@ -22,13 +19,11 @@ body {
     width: 60%;
 }
 
-/* Question text */
 #question {
     font-size: 1.5em;
     margin-bottom: 20px;
 }
 
-/* Start button */
 #start-button, button {
     background-color: white;
     color: black;
@@ -43,14 +38,12 @@ button:hover {
     background-color: #f0f0f0;
 }
 
-/* Fireworks animation */
 @keyframes fireworks {
     0% { opacity: 0; transform: scale(0); }
     50% { opacity: 1; transform: scale(1.5); }
     100% { opacity: 0; transform: scale(2); }
 }
 
-/* Firework container */
 .fireworks {
     position: fixed;
     top: 10%;
