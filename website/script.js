@@ -1,63 +1,76 @@
 let currentQuestionIndex = 0;
-let quiz;
+let questions = [];
 
-function displayQuestion() {
-    const questionData = quiz.questions.getNodeAt(currentQuestionIndex);
-
-    if (questionData) {
-        document.getElementById("question").textContent = questionData.questionText;
-
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = ''; // Clear previous options
-
-        // Loop through options as key-value pairs
-        Object.entries(questionData.options).forEach(([key, optionText]) => {
-            const optionButton = document.createElement("button");
-            optionButton.textContent = `${key}: ${optionText}`;
-            optionButton.onclick = () => selectAnswer(key);
-            optionsContainer.appendChild(optionButton);
-        });
-    } else {
-        console.error("No question data found!");
-    }
+// Load questions from JSON
+async function loadQuestions() {
+  const response = await fetch("code/questions.json");
+  const data = await response.json();
+  questions = data.questions;
 }
 
-
-function selectAnswer(selectedOption) {
-    const questionData = quiz.questions.getNodeAt(currentQuestionIndex);
-    if (questionData && selectedOption === questionData.correctAnswer) {
-        document.getElementById("answer-feedback").textContent = "Correct!";
-        document.getElementById("answer-feedback").style.color = "green";
-    } else {
-        document.getElementById("answer-feedback").textContent = "Incorrect!";
-        document.getElementById("answer-feedback").style.color = "red";
-    }
-    document.getElementById("answer-feedback").style.display = "block";
-}
+document.getElementById("startQuiz").addEventListener("click", startQuiz);
+document.getElementById("checkAnswer").addEventListener("click", checkAnswer);
+document.getElementById("nextQuestion").addEventListener("click", nextQuestion);
 
 function startQuiz() {
-    document.getElementById("start-button").style.display = "none";
-    document.getElementById("quiz-container").style.display = "block";
+  document.getElementById("startQuiz").classList.add("hidden");
+  document.getElementById("quizBox").classList.remove("hidden");
+  loadQuestions().then(() => showQuestion(currentQuestionIndex));
+}
 
-    quiz = new Quiz();
-    quiz.addQuestion("What is the capital of France?", { A: "Paris", B: "London", C: "Berlin", D: "Madrid" }, "A");
-    quiz.addQuestion("What is the largest planet in our Solar System?", { A: "Earth", B: "Jupiter", C: "Mars", D: "Venus" }, "B");
-    quiz.addQuestion("Who wrote 'Hamlet'?", { A: "Charles Dickens", B: "William Shakespeare", C: "J.K. Rowling", D: "Jane Austen" }, "B");
+function showQuestion(index) {
+  const questionText = document.getElementById("questionText");
+  const optionsContainer = document.getElementById("options");
+  
+  questionText.textContent = questions[index].question;
+  optionsContainer.innerHTML = '';
+  
+  // Create option buttons with keys (A, B, C, D)
+  for (const [key, value] of Object.entries(questions[index].options)) {
+    const button = document.createElement("button");
+    button.textContent = `${key}: ${value}`;
+    button.classList.add("option-button");
+    button.dataset.optionKey = key;  // Store the option key in a data attribute
+    button.addEventListener("click", () => selectOption(button));
+    optionsContainer.appendChild(button);
+  }
+}
 
-    displayQuestion();
+let selectedOption = null;
+
+function selectOption(button) {
+  if (selectedOption) {
+    selectedOption.classList.remove("selected");
+  }
+  button.classList.add("selected");
+  selectedOption = button;
+}
+
+function checkAnswer() {
+  if (selectedOption) {
+    const selectedAnswerKey = selectedOption.dataset.optionKey;
+    const correctAnswerKey = questions[currentQuestionIndex].answer;
+    if (selectedAnswerKey === correctAnswerKey) {
+      selectedOption.classList.add("correct");
+      alert("Correct!");
+    } else {
+      selectedOption.classList.add("incorrect");
+      alert("Incorrect. The correct answer is " + correctAnswerKey);
+    }
+  } else {
+    alert("Please select an answer.");
+  }
 }
 
 function nextQuestion() {
-    if (currentQuestionIndex < quiz.questions.size() - 1) {
-        currentQuestionIndex++;
-        displayQuestion();
-    } else {
-        showResetButton();
-    }
-}
-
-function resetQuiz() {
-    currentQuestionIndex = 0;
-    document.getElementById("quiz-container").style.display = "none";
-    document.getElementById("start-button").style.display = "block";
+  selectedOption = null;
+  currentQuestionIndex++;
+  if (currentQuestionIndex < questions.length) {
+    showQuestion(currentQuestionIndex);
+  } else {
+    alert("Quiz completed!");
+    document.getElementById("quizBox").classList.add("hidden");
+    document.getElementById("startQuiz").classList.remove("hidden");
+    currentQuestionIndex = 0; // Reset for replay
+  }
 }
