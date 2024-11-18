@@ -1,76 +1,54 @@
-let currentQuestionIndex = 0;
-let questions = [];
+document.addEventListener("DOMContentLoaded", () => {
+  const questionBox = document.getElementById("question-box");
+  const optionsBox = document.getElementById("options-box");
+  const checkAnswerBtn = document.getElementById("check-answer");
+  const nextQuestionBtn = document.getElementById("next-question");
 
-// Load questions from JSON
-async function loadQuestions() {
-  const response = await fetch("code/questions.json");
-  const data = await response.json();
-  questions = data.questions;
-}
+  let currentQuestionIndex = 0;
 
-document.getElementById("startQuiz").addEventListener("click", startQuiz);
-document.getElementById("checkAnswer").addEventListener("click", checkAnswer);
-document.getElementById("nextQuestion").addEventListener("click", nextQuestion);
+  const questions = [
+      {
+          question: "What is the capital of France?",
+          options: ["Paris", "Rome", "Berlin", "Madrid"],
+          correctAnswer: "Paris"
+      },
+      {
+          question: "What is 2 + 2?",
+          options: ["3", "4", "5", "6"],
+          correctAnswer: "4"
+      }
+  ];
 
-function startQuiz() {
-  document.getElementById("startQuiz").classList.add("hidden");
-  document.getElementById("quizBox").classList.remove("hidden");
-  loadQuestions().then(() => showQuestion(currentQuestionIndex));
-}
+  const displayQuestion = () => {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionBox.textContent = currentQuestion.question;
+      optionsBox.innerHTML = "";
+      currentQuestion.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.textContent = option;
+          btn.onclick = () => selectAnswer(option);
+          optionsBox.appendChild(btn);
+      });
+  };
 
-function showQuestion(index) {
-  const questionText = document.getElementById("questionText");
-  const optionsContainer = document.getElementById("options");
-  
-  questionText.textContent = questions[index].question;
-  optionsContainer.innerHTML = '';
-  
-  // Create option buttons with keys (A, B, C, D)
-  for (const [key, value] of Object.entries(questions[index].options)) {
-    const button = document.createElement("button");
-    button.textContent = `${key}: ${value}`;
-    button.classList.add("option-button");
-    button.dataset.optionKey = key;  // Store the option key in a data attribute
-    button.addEventListener("click", () => selectOption(button));
-    optionsContainer.appendChild(button);
-  }
-}
+  const selectAnswer = (answer) => {
+      if (answer === questions[currentQuestionIndex].correctAnswer) {
+          alert("Correct!");
+          nextQuestionBtn.disabled = false;
+      } else {
+          alert("Wrong! Try again.");
+      }
+  };
 
-let selectedOption = null;
+  nextQuestionBtn.onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+          displayQuestion();
+          nextQuestionBtn.disabled = true;
+      } else {
+          alert("Quiz Complete!");
+      }
+  };
 
-function selectOption(button) {
-  if (selectedOption) {
-    selectedOption.classList.remove("selected");
-  }
-  button.classList.add("selected");
-  selectedOption = button;
-}
-
-function checkAnswer() {
-  if (selectedOption) {
-    const selectedAnswerKey = selectedOption.dataset.optionKey;
-    const correctAnswerKey = questions[currentQuestionIndex].answer;
-    if (selectedAnswerKey === correctAnswerKey) {
-      selectedOption.classList.add("correct");
-      alert("Correct!");
-    } else {
-      selectedOption.classList.add("incorrect");
-      alert("Incorrect. The correct answer is " + correctAnswerKey);
-    }
-  } else {
-    alert("Please select an answer.");
-  }
-}
-
-function nextQuestion() {
-  selectedOption = null;
-  currentQuestionIndex++;
-  if (currentQuestionIndex < questions.length) {
-    showQuestion(currentQuestionIndex);
-  } else {
-    alert("Quiz completed!");
-    document.getElementById("quizBox").classList.add("hidden");
-    document.getElementById("startQuiz").classList.remove("hidden");
-    currentQuestionIndex = 0; // Reset for replay
-  }
-}
+  displayQuestion();
+});
